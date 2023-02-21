@@ -1,0 +1,33 @@
+info:
+  contact: {}
+paths:
+  /classify:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Classifies an uploaded image as kolam or bukan kolam.
+      parameters:
+      - description: Image file to classify
+        in: formData
+        name: image
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Return classification image, kolam / bukan kolam
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Classify image
+swagger: "2.0"

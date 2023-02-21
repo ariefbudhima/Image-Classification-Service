@@ -10,10 +10,23 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/nfnt/resize"
 
+	"example.com/image-classification/docs"
 	tf "github.com/galeone/tensorflow/tensorflow/go"
 	tfgo "github.com/galeone/tfgo"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
+// classifyHandler handles image classification.
+// @Summary Classify image
+// @Description Classifies an uploaded image as kolam or bukan kolam.
+// @Accept mpfd
+// @Produce json
+// @Param image formData file true "Image file to classify"
+// @Success 200 {object} map[string]string "Return classification image, kolam / bukan kolam"
+// @Failure 400 {object} string "Bad Request"
+// @Failure 500 {object} string "Internal Server Error"
+// @Router /classify [post]
 func classifyHandler(c *gin.Context) {
 	imageSize := 224
 	// Load image from form data
@@ -97,10 +110,17 @@ func softmax(input []float32) []float32 {
 }
 
 func main() {
+	docs.SwaggerInfo.Title = "Swagger Image Classification API"
+	docs.SwaggerInfo.Description = "This is a sample server image classification server."
+	docs.SwaggerInfo.Version = "1.0"
+	docs.SwaggerInfo.Host = "localhost:8080"
+	docs.SwaggerInfo.Schemes = []string{"http", "https"}
+
 	r := gin.Default()
 
 	// Set up classification endpoint
 	r.POST("/classify", classifyHandler)
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// Start server
 	if err := r.Run(":8080"); err != nil {
